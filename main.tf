@@ -1,7 +1,7 @@
-resource "proxmox_vm_qemu" "ubuntu-noble-terraform-test" {
+resource "proxmox_vm_qemu" "ubuntu-noble-terraform-example" {
   target_node = "proxmox"
-  name        = "ubuntu-noble-terraform-test"
-  clone       = "ubuntu-server-24.04-template"
+  name        = "ubuntu-noble-terraform-example"
+  clone       = "ubuntu-server-24.04"
   full_clone  = true
   os_type     = "cloud-init"
 
@@ -41,10 +41,10 @@ resource "proxmox_vm_qemu" "ubuntu-noble-terraform-test" {
   }
 
   network {
-    id     = 0
-    model  = "virtio"
-    bridge = "vmbr0"
-    # tag = 1
+    id       = 0
+    model    = "virtio"
+    bridge   = "vmbr0"
+    tag      = var.vlan
     firewall = true
   }
 
@@ -60,7 +60,10 @@ resource "proxmox_vm_qemu" "ubuntu-noble-terraform-test" {
   cipassword = var.cipassword
   sshkeys    = var.sshkey
   ciupgrade  = false
-  ipconfig0  = "ip=dhcp"
+  ipconfig0  = "ip=${lookup(local.vlan_data, var.vlan).ip},gw=${lookup(local.vlan_data, var.vlan).gw}"
+
+
+
 
   # Options Configuration
   boot  = "order=scsi0;net0"

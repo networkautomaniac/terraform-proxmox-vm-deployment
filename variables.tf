@@ -26,3 +26,7 @@ variable "sshkey" {
   type      = string
   sensitive = true
 }
+
+variable "vlan" {
+  type = number
+}
