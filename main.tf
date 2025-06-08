@@ -1,72 +1,68 @@
 resource "proxmox_vm_qemu" "ubuntu-noble-terraform-example" {
-  target_node = "proxmox"
-  name        = "ubuntu-noble-terraform-example"
-  clone       = "ubuntu-server-24.04"
-  full_clone  = true
-  os_type     = "cloud-init"
+  target_node = var.target_node
+  name        = var.name
+  clone       = var.clone
+  full_clone  = var.full_clone
+  os_type     = var.os_type
 
   # Hardware Configuration
-  memory  = 8192
-  balloon = 8192
+  memory  = var.memory
+  balloon = var.balloon
+
   cpu {
-    cores   = 4
-    sockets = 1
-    type    = "host"
+    cores   = var.cpu_cores
+    sockets = var.cpu_sockets
+    type    = var.cpu_type
   }
 
-  machine = "q35"
-  scsihw  = "virtio-scsi-single"
+  machine = var.machine
+  scsihw  = var.scsihw
 
   disks {
     ide {
-      ide2 {
+      ide0 {
         cloudinit {
-          storage = "local-lvm"
+          storage = var.cloudinit_storage
         }
       }
     }
     scsi {
       scsi0 {
         disk {
-          size       = 64
-          cache      = "none"
-          storage    = "local-lvm"
-          discard    = true
-          emulatessd = true
-          iothread   = true
-          replicate  = false
+          size       = var.disk_size
+          cache      = var.disk_cache
+          storage    = var.disk_storage
+          discard    = var.disk_discard
+          emulatessd = var.disk_emulatessd
+          iothread   = var.disk_iothread
+          replicate  = var.disk_replicate
         }
       }
     }
   }
 
   network {
-    id       = 0
-    model    = "virtio"
-    bridge   = "vmbr0"
-    tag      = var.vlan
-    firewall = true
+    id       = var.network_id
+    model    = var.network_model
+    bridge   = var.network_bridge
+    tag      = var.network_tag
+    firewall = var.network_firewall
   }
 
   serial {
-    id   = 0
-    type = "socket"
+    id   = var.serial_id
+    type = var.serial_type
   }
 
   # Cloud-Init Configuration
-  ciuser = var.ciuser
-  # searchdomain = var.searchdomain
-  # nameserver   = var.nameserver
+  ciuser     = var.ciuser
   cipassword = var.cipassword
   sshkeys    = var.sshkey
-  ciupgrade  = false
-  ipconfig0  = "ip=${lookup(local.vlan_data, var.vlan).ip},gw=${lookup(local.vlan_data, var.vlan).gw}"
-
-
-
+  ciupgrade  = var.ciupgrade
+  ipconfig0  = "ip=${lookup(local.vlan_data, var.network_tag).ip},gw=${lookup(local.vlan_data, var.network_tag).gw}"
 
   # Options Configuration
-  boot  = "order=scsi0;net0"
-  agent = 1
+  boot  = var.boot
+  agent = var.agent
 
 }

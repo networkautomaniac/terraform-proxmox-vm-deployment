@@ -1,1 +1,35 @@
-vlan = ""
+# VM Configuration
+target_node       = "proxmox"
+name              = "terraform-ubuntu-server-24.04"
+clone             = "ubuntu-server-24.04"
+full_clone        = true
+os_type           = "cloud-init"
+memory            = 8192
+balloon           = 8192
+cpu_cores         = 4
+cpu_sockets       = 1
+cpu_type          = "host"
+machine           = "q35"
+scsihw            = "virtio-scsi-single"
+cloudinit_storage = "local-lvm"
+disk_size         = 64
+disk_cache        = "none"
+disk_storage      = "local-lvm"
+disk_discard      = true
+disk_emulatessd   = true
+disk_iothread     = true
+disk_replicate    = false
+network_id        = 0
+network_model     = "virtio"
+network_bridge    = "vmbr0"
+network_tag       = 50
+network_firewall  = false
+serial_id         = 0
+serial_type       = "socket"
+
+# Cloud-Init Configuration
+ciupgrade = false
+
+# Options Configuration
+boot  = "order=scsi0;net0"
+agent = 1
